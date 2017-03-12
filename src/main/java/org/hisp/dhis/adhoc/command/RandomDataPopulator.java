@@ -36,13 +36,13 @@ public class RandomDataPopulator
 {
     private static final Log log = LogFactory.getLog( RandomDataPopulator.class );
     
-    private static final String DE_GROUP = "Svac1cNQhRS";
+    private static final String DE_GROUP = "URmi41e0SFH";
     private static final String DE_WEIGHT = "h0xKKjijTdI";
     private static final int OU_LEVEL = 4;
     private static final String PE_WEIGHT = "2016";
     private static final List<String> PERIODS = Arrays.asList( 
-        "201501", "201502", "201503", "201504", "201505", "201506", "201507", "201508", "201509", "201510","201511", "201512", 
-        "201601", "201602", "201603", "201604", "201605", "201606", "201607", "201608", "201609", "201610","201611", "201612"
+        "201601", "201602", "201603", "201604", "201605", "201606", "201607", "201608", "201609", "201610","201611", "201612",
+        "201701", "201702", "201703", "201704", "201705", "201706", "201707", "201708", "201709", "201710","201711", "201712" 
     );
     
     @Autowired
@@ -98,7 +98,6 @@ public class RandomDataPopulator
         // Category option combos
         // ---------------------------------------------------------------------
         
-        DataElementCategoryOptionCombo coc = categoryService.getDataElementCategoryOptionCombo( 1153734 );
         DataElementCategoryOptionCombo aoc = categoryService.getDefaultDataElementCategoryOptionCombo();
 
         // ---------------------------------------------------------------------
@@ -127,13 +126,16 @@ public class RandomDataPopulator
 
         Date d = new Date();
         
-        int total = pes.size();
-        int count = 0;
+        int peTotal = pes.size();
+        int peCount = 0;
+        long dvCount = 0;
 
         Random r = new Random();
         
         for ( Period pe : pes )
         {
+            log.info( "Generating data for period: " + pe );
+            
             double peFactor = ( ( r.nextInt( 50 ) + 75 ) / 100d );
             
             for ( OrganisationUnit ou : ous )
@@ -141,21 +143,25 @@ public class RandomDataPopulator
                 String val = valueMap.get( ou.getUid() );
             
                 for ( DataElement de : des )
-                {   
-                    if ( val != null )
+                {
+                    for ( DataElementCategoryOptionCombo coc : de.getCategoryOptionCombos() )
                     {
-                        DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( getVal( val, peFactor ) ), "", d, "" );
-                        handler.addObject( dv );
+                        if ( val != null )
+                        {
+                            DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( getVal( val, peFactor ) ), "", d, "" );
+                            handler.addObject( dv );
+                            dvCount++;
+                        }
                     }
                 }
             }
             
-            log.info( "Done for " + ( ++count ) + " out of " + total );
+            log.info( "Done for " + ( ++peCount ) + " out of " + peTotal );
         }
         
         handler.flush();
         
-        log.info( "Data population completed" );
+        log.info( "Data population completed, added " + dvCount + " data values" );
     }
     
     private Integer getVal( String value, double peFactor )
@@ -163,7 +169,7 @@ public class RandomDataPopulator
         Random r = new Random();
         Double val = Double.parseDouble( value );
         Double delta = 30 * ( r.nextDouble() - 0.5 );
-        Double weightedVal = ( val * 0.6 ) + delta;
+        Double weightedVal = ( val * 0.2 ) + delta;
         weightedVal = weightedVal * peFactor;
         return weightedVal.intValue();
     }    
