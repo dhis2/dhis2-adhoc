@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.hisp.quick.BatchHandler;
 import org.hisp.quick.BatchHandlerFactory;
@@ -19,6 +20,8 @@ import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
 import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementService;
+import org.hisp.dhis.dataset.DataSet;
+import org.hisp.dhis.dataset.DataSetService;
 import org.hisp.dhis.datavalue.DataValue;
 import org.hisp.dhis.datavalue.DataValueService;
 import org.hisp.dhis.jdbc.batchhandler.DataValueBatchHandler;
@@ -37,6 +40,7 @@ public class RandomDataPopulator
     private static final Log log = LogFactory.getLog( RandomDataPopulator.class );
     
     private static final String DE_GROUP = "URmi41e0SFH";
+    private static final String DS = "URmi41e0SFH";
     private static final String DE_WEIGHT = "h0xKKjijTdI";
     private static final int OU_LEVEL = 4;
     private static final String PE_WEIGHT = "2016";
@@ -47,6 +51,9 @@ public class RandomDataPopulator
     
     @Autowired
     private DataElementService dataElementService;
+    
+    @Autowired
+    private DataSetService dataSetService;
         
     @Autowired
     private PeriodService periodService;
@@ -98,8 +105,14 @@ public class RandomDataPopulator
         // Category option combos
         // ---------------------------------------------------------------------
         
-        DataElementCategoryOptionCombo aoc = categoryService.getDefaultDataElementCategoryOptionCombo();
+        DataSet dataSet = dataSetService.getDataSet( DS );
+        
+        DataElementCategoryOptionCombo defaultAoc = categoryService.getDefaultDataElementCategoryOptionCombo();
 
+        Set<DataElementCategoryOptionCombo> aocs = dataSet != null ? dataSet.getCategoryCombo().getOptionCombos() : Sets.newHashSet( defaultAoc );
+        
+        log.info( "Attribute option combos: " + aocs );
+        
         // ---------------------------------------------------------------------
         // Weight data
         // ---------------------------------------------------------------------
@@ -146,11 +159,14 @@ public class RandomDataPopulator
                 {
                     for ( DataElementCategoryOptionCombo coc : de.getCategoryOptionCombos() )
                     {
-                        if ( val != null )
+                        for ( DataElementCategoryOptionCombo aoc : aocs )
                         {
-                            DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( getVal( val, peFactor ) ), "", d, "" );
-                            handler.addObject( dv );
-                            dvCount++;
+                            if ( val != null )
+                            {
+                                DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( getVal( val, peFactor ) ), "", d, "" );
+                                handler.addObject( dv );
+                                dvCount++;
+                            }
                         }
                     }
                 }
