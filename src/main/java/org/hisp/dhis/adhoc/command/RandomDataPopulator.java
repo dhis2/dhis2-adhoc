@@ -1,7 +1,6 @@
 package org.hisp.dhis.adhoc.command;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -13,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.hisp.quick.BatchHandler;
 import org.hisp.quick.BatchHandlerFactory;
+import org.joda.time.DateTime;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
@@ -27,6 +27,7 @@ import org.hisp.dhis.datavalue.DataValueService;
 import org.hisp.dhis.jdbc.batchhandler.DataValueBatchHandler;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitService;
+import org.hisp.dhis.period.CalendarPeriodType;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.commons.collection.ListUtils;
@@ -37,18 +38,20 @@ import com.google.common.collect.Sets;
 
 public class RandomDataPopulator
 {
+    // Configuration start
+    
+    private static final String DS = "Lpw6GcnTrmS"; // Data set to populate
+    private static final int OU_LEVEL = 4; // Level of org units to populate
+    private static final double OU_DENSITY_PERCENTAGE = 0.6d; // Percentage of org units to populate
+    private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate();
+    private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate();
+    
+    private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for generation
+    private static final String PE_WEIGHT = "2016"; // Period to use as basis for generation
+
+    // Configuration end
+    
     private static final Log log = LogFactory.getLog( RandomDataPopulator.class );
-    
-    private static final String DS = "Lpw6GcnTrmS";
-    private static final int OU_LEVEL = 4;
-    private static final double OU_DENSITY_PERC = 0.8d;    
-    private static final String DE_WEIGHT = "h0xKKjijTdI";
-    private static final String PE_WEIGHT = "2016";
-    
-    private static final List<String> PERIODS = Arrays.asList( 
-        "201601", "201602", "201603", "201604", "201605", "201606", "201607", "201608", "201609", "201610","201611", "201612",
-        "201701", "201702", "201703", "201704", "201705", "201706", "201707", "201708", "201709", "201710","201711", "201712" 
-    );
     
     @Autowired
     private DataElementService dataElementService;
@@ -82,18 +85,10 @@ public class RandomDataPopulator
 
         List<OrganisationUnit> ous = new ArrayList<OrganisationUnit>( organisationUnitService.getOrganisationUnitsAtLevel( OU_LEVEL ) );
         Collections.shuffle( ous );
-        Double maxOus = ous.size() * OU_DENSITY_PERC;
+        Double maxOus = ous.size() * OU_DENSITY_PERCENTAGE;
         ous = ListUtils.subList( ous, 0, maxOus.intValue() );
         
-        log.info( String.format( "Organisation units: %d, max: %d", ous.size(), maxOus ) );
-
-        // ---------------------------------------------------------------------
-        // Periods (might fail if not present in database due to single tx)
-        // ---------------------------------------------------------------------
-
-        List<Period> pes = periodService.reloadIsoPeriods( PERIODS );
-        
-        log.info( String.format( "Periods: %s", pes ) );
+        log.info( String.format( "Organisation units: %d, max: %3.2f", ous.size(), maxOus ) );
 
         // ---------------------------------------------------------------------
         // Data set
@@ -102,6 +97,15 @@ public class RandomDataPopulator
         DataSet dataSet = dataSetService.getDataSet( DS );
         
         log.info( String.format( "Data set: '%s', data elements: %d", dataSet.getName(), dataSet.getDataElements().size() ) );
+
+        // ---------------------------------------------------------------------
+        // Periods (might fail if not present in database due to single tx)
+        // ---------------------------------------------------------------------
+
+        CalendarPeriodType periodType = (CalendarPeriodType) dataSet.getPeriodType();
+        List<Period> pes = periodType.generatePeriods( START_DATE, END_DATE );
+                
+        log.info( String.format( "Periods (%d): %s", pes.size(), pes ) );
 
         // ---------------------------------------------------------------------
         // Category option combinations
@@ -123,8 +127,6 @@ public class RandomDataPopulator
         Collection<DataValue> values = dataValueService.getDataValues( Sets.newHashSet( deWeight ), Sets.newHashSet( peWeight ), ous );
         
         Map<String, String> orgUnitValueMap = values.stream().collect( Collectors.toMap( v -> v.getSource().getUid(), v -> v.getValue() ) );
-                
-        log.info( String.format( "Weight data values: %d", orgUnitValueMap.keySet().size() ) );
         
         // ---------------------------------------------------------------------
         // Setup and generation
@@ -139,7 +141,7 @@ public class RandomDataPopulator
         long dvCount = 0;
 
         Random r = new Random();
-        
+            
         for ( Period pe : pes )
         {
             log.info( String.format( "Generating data for period: %s", pe ) );
@@ -176,7 +178,7 @@ public class RandomDataPopulator
         
         handler.flush();
         
-        log.info( String.format( "Data population completed, added %d data values", dvCount ) );
+        log.info( String.format( "Data population completed, values added: %", dvCount ) );
     }
     
     private Integer getVal( String value, double peFactor, double deFactor )
