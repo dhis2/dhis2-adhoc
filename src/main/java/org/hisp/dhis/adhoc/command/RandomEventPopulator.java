@@ -58,7 +58,7 @@ public class RandomEventPopulator
             event.setProgram( "eBAyeGv0exc" ); // In-patient
             event.setProgramStage( "Zj7UnCAulEk" );
             event.setOrgUnit( ous.get( new Random().nextInt( ous.size() ) ).getUid() );
-            event.setEventDate( DateUtils.getLongDateString( date.toDate() ) );            
+            event.setEventDate( DateUtils.getLongDateString( date.toDate() ) );
             
             event.getDataValues().add( new DataValue( "qrur9Dvnyt5", String.valueOf( new Random().nextInt( 89 ) ) ) ); // Age
             event.getDataValues().add( new DataValue( "oZg33kd9taw", OPT_GENDER.get( new Random().nextInt( 2 ) ) ) ); // Gender

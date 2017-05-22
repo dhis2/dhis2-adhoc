@@ -53,7 +53,7 @@ public class RandomDataPopulator
 
     private static final String DS = "Nyh6laLdBEJ"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
-    private static final double OU_DENSITY_PERCENTAGE = 0.3d; // Percentage of org units to populate
+    private static final double OU_DENSITY_PERCENTAGE = 0.1d; // Percentage of org units to populate
     
     private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
     private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
@@ -63,7 +63,7 @@ public class RandomDataPopulator
     private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for generation
     private static final String PE_WEIGHT = "2016"; // Period to use as basis for generation
     private static final int RANDOM_MIN = 0; // Minimum random value
-    private static final int RANDOM_MAX = 10; // Maximum random value
+    private static final int RANDOM_MAX = 5; // Maximum random value
     
     private static final boolean DRY_RUN = false; // Whether to perform a dry run and not persist any values
 
@@ -186,7 +186,7 @@ public class RandomDataPopulator
             
                 for ( DataElement de : dataSet.getDataElements() )
                 {
-                    double deFactor = ( ( 70 + r.nextInt( 60 ) ) / 100d );
+                    double deFactor = ( ( 50 + r.nextInt( 100 ) ) / 100d );
                     
                     for ( DataElementCategoryOptionCombo coc : de.getCategoryOptionCombos() )
                     {
