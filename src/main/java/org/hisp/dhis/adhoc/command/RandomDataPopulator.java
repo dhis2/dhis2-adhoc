@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hisp.quick.BatchHandler;
 import org.hisp.quick.BatchHandlerFactory;
@@ -39,8 +39,7 @@ public class RandomDataPopulator
 {
     private static final Log log = LogFactory.getLog( RandomDataPopulator.class );
     
-    private static final String DE_GROUP = "URmi41e0SFH";
-    private static final String DS = "URmi41e0SFH";
+    private static final String DS = "Lpw6GcnTrmS";
     private static final String DE_WEIGHT = "h0xKKjijTdI";
     private static final int OU_LEVEL = 4;
     private static final String PE_WEIGHT = "2016";
@@ -76,20 +75,12 @@ public class RandomDataPopulator
         throws Exception
     {
         // ---------------------------------------------------------------------
-        // Data elements
-        // ---------------------------------------------------------------------
-
-        List<DataElement> des = new ArrayList<DataElement>( dataElementService.getDataElementGroup( DE_GROUP ).getMembers() );
-
-        log.info( "Data elements: " + des.size() );
-        
-        // ---------------------------------------------------------------------
         // Organisation units
         // ---------------------------------------------------------------------
 
         List<OrganisationUnit> ous = new ArrayList<OrganisationUnit>( organisationUnitService.getOrganisationUnitsAtLevel( OU_LEVEL ) );
         Collections.shuffle( ous );
-        ous = ListUtils.subList( ous, 0, 700 );
+        ous = ListUtils.subList( ous, 0, 800 );
         
         log.info( "Organisation units: " + ous.size() );
 
@@ -102,10 +93,16 @@ public class RandomDataPopulator
         log.info( "Periods: " + pes );
 
         // ---------------------------------------------------------------------
-        // Category option combos
+        // Data set
         // ---------------------------------------------------------------------
         
         DataSet dataSet = dataSetService.getDataSet( DS );
+        
+        log.info( "Data set: '" + dataSet.getName() + "', data elements: " + dataSet.getDataElements().size() );
+
+        // ---------------------------------------------------------------------
+        // Category option combinations
+        // ---------------------------------------------------------------------
         
         DataElementCategoryOptionCombo defaultAoc = categoryService.getDefaultDataElementCategoryOptionCombo();
 
@@ -122,14 +119,9 @@ public class RandomDataPopulator
         
         Collection<DataValue> values = dataValueService.getDataValues( Sets.newHashSet( deWeight ), Sets.newHashSet( peWeight ), ous );
         
-        Map<String, String> valueMap = new HashMap<String, String>();
-        
-        for ( DataValue value : values )
-        {
-            valueMap.put( value.getSource().getUid(), value.getValue() );
-        }
-        
-        log.info( "Weight data values: " + valueMap.keySet().size() );
+        Map<String, String> orgUnitValueMap = values.stream().collect( Collectors.toMap( v -> v.getSource().getUid(), v -> v.getValue() ) );
+                
+        log.info( "Weight data values: " + orgUnitValueMap.keySet().size() );
         
         // ---------------------------------------------------------------------
         // Setup and generation
@@ -149,21 +141,23 @@ public class RandomDataPopulator
         {
             log.info( "Generating data for period: " + pe );
             
-            double peFactor = ( ( r.nextInt( 50 ) + 75 ) / 100d );
+            double peFactor = ( ( r.nextInt( 60 ) + 70 ) / 100d );
             
             for ( OrganisationUnit ou : ous )
-            {
-                String val = valueMap.get( ou.getUid() );
+            {                
+                String val = orgUnitValueMap.get( ou.getUid() );
             
-                for ( DataElement de : des )
+                for ( DataElement de : dataSet.getDataElements() )
                 {
+                    double deFactor = ( ( r.nextInt( 60 ) + 70 ) / 100d );
+                    
                     for ( DataElementCategoryOptionCombo coc : de.getCategoryOptionCombos() )
                     {
                         for ( DataElementCategoryOptionCombo aoc : aocs )
                         {
                             if ( val != null )
                             {
-                                DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( getVal( val, peFactor ) ), "", d, "" );
+                                DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( getVal( val, peFactor, deFactor ) ), "", d, "" );
                                 handler.addObject( dv );
                                 dvCount++;
                             }
@@ -180,13 +174,13 @@ public class RandomDataPopulator
         log.info( "Data population completed, added " + dvCount + " data values" );
     }
     
-    private Integer getVal( String value, double peFactor )
+    private Integer getVal( String value, double peFactor, double deFactor )
     {
         Random r = new Random();
         Double val = Double.parseDouble( value );
-        Double delta = 30 * ( r.nextDouble() - 0.5 );
+        Double delta = 80 * ( r.nextDouble() - 0.5 );
         Double weightedVal = ( val * 0.2 ) + delta;
-        weightedVal = weightedVal * peFactor;
+        weightedVal = weightedVal * peFactor * deFactor;
         return weightedVal.intValue();
     }    
 }
