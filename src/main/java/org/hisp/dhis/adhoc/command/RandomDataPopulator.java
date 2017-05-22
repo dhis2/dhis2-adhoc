@@ -30,6 +30,7 @@ import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.period.CalendarPeriodType;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
+import org.hisp.dhis.system.util.Clock;
 import org.hisp.dhis.commons.collection.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,19 +39,23 @@ import com.google.common.collect.Sets;
 
 public class RandomDataPopulator
 {
-    // Configuration start
-    
+    // -------------------------------------------------------------------------
+    // Configuration
+    // -------------------------------------------------------------------------
+
     private static final String DS = "Lpw6GcnTrmS"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
     private static final double OU_DENSITY_PERCENTAGE = 0.6d; // Percentage of org units to populate
-    private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate();
-    private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate();
+    private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
+    private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
     
     private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for generation
     private static final String PE_WEIGHT = "2016"; // Period to use as basis for generation
 
-    // Configuration end
-    
+    // -------------------------------------------------------------------------
+    // Dependencies
+    // -------------------------------------------------------------------------
+
     private static final Log log = LogFactory.getLog( RandomDataPopulator.class );
     
     @Autowired
@@ -73,12 +78,18 @@ public class RandomDataPopulator
 
     @Autowired
     private DataValueService dataValueService;
-    
+
+    // -------------------------------------------------------------------------
+    // Populator
+    // -------------------------------------------------------------------------
+
     @Transactional
     @Executed
     public void execute()
         throws Exception
     {
+        Clock clock = new Clock( log ).startClock();
+        
         // ---------------------------------------------------------------------
         // Organisation units
         // ---------------------------------------------------------------------
@@ -105,7 +116,7 @@ public class RandomDataPopulator
         CalendarPeriodType periodType = (CalendarPeriodType) dataSet.getPeriodType();
         List<Period> pes = periodType.generatePeriods( START_DATE, END_DATE );
                 
-        log.info( String.format( "Periods (%d): %s", pes.size(), pes ) );
+        log.info( String.format( "Periods: %d: %s", pes.size(), pes ) );
 
         // ---------------------------------------------------------------------
         // Category option combinations
@@ -115,7 +126,7 @@ public class RandomDataPopulator
 
         Set<DataElementCategoryOptionCombo> aocs = dataSet != null ? dataSet.getCategoryCombo().getOptionCombos() : Sets.newHashSet( defaultAoc );
         
-        log.info( String.format( "Attribute option combos: %s", aocs ) );
+        log.info( String.format( "Attribute option combos: %d: %s", aocs.size(), aocs ) );
         
         // ---------------------------------------------------------------------
         // Weight data
@@ -178,7 +189,7 @@ public class RandomDataPopulator
         
         handler.flush();
         
-        log.info( String.format( "Data population completed, values added: %", dvCount ) );
+        clock.logTime( String.format( "Data population completed, values added: %", dvCount ) );
     }
     
     private Integer getVal( String value, double peFactor, double deFactor )
