@@ -54,8 +54,10 @@ public class RandomDataPopulator
     private static final String DS = "Nyh6laLdBEJ"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
     private static final double OU_DENSITY_PERCENTAGE = 0.3d; // Percentage of org units to populate
+    
     private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
     private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
+    private static final double PERIOD_DENSITY_PERCENTAGE = 0.3d; // Percentage of periods to populate
     
     private static final boolean USE_RANDOM_VALUES = true; // Whether to use correlated or random values
     private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for generation
@@ -131,6 +133,8 @@ public class RandomDataPopulator
         CalendarPeriodType periodType = (CalendarPeriodType) dataSet.getPeriodType();
         List<Period> pes = periodType.generatePeriods( START_DATE, END_DATE );
         pes = periodService.reloadPeriods( pes );
+        Double maxPes = pes.size() * PERIOD_DENSITY_PERCENTAGE;
+        pes = ListUtils.subList( pes, 0, maxPes.intValue() );
                 
         log.info( String.format( "Periods: %d: %s", pes.size(), pes ) );
 
