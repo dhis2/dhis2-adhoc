@@ -42,8 +42,8 @@ import com.google.common.collect.Sets;
  * to your needs.
  * <p>
  * The configuration is based on a data set. Data will be generated for all
- * data elements in the data set and their disaggregation categories and for the
- * attribute categories of the data set.
+ * data elements in the data set and their categories and for the attribute 
+ * categories of the data set.
  */
 public class RandomDataPopulator
 {
@@ -133,6 +133,7 @@ public class RandomDataPopulator
         CalendarPeriodType periodType = (CalendarPeriodType) dataSet.getPeriodType();
         List<Period> pes = periodType.generatePeriods( START_DATE, END_DATE );
         pes = periodService.reloadPeriods( pes );
+        Collections.shuffle( pes );
         Double maxPes = pes.size() * PERIOD_DENSITY_PERCENTAGE;
         pes = ListUtils.subList( pes, 0, maxPes.intValue() );
                 
