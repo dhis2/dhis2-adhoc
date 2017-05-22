@@ -40,9 +40,11 @@ public class RandomDataPopulator
     private static final Log log = LogFactory.getLog( RandomDataPopulator.class );
     
     private static final String DS = "Lpw6GcnTrmS";
-    private static final String DE_WEIGHT = "h0xKKjijTdI";
     private static final int OU_LEVEL = 4;
+    private static final double OU_DENSITY_PERC = 0.8d;    
+    private static final String DE_WEIGHT = "h0xKKjijTdI";
     private static final String PE_WEIGHT = "2016";
+    
     private static final List<String> PERIODS = Arrays.asList( 
         "201601", "201602", "201603", "201604", "201605", "201606", "201607", "201608", "201609", "201610","201611", "201612",
         "201701", "201702", "201703", "201704", "201705", "201706", "201707", "201708", "201709", "201710","201711", "201712" 
@@ -80,9 +82,10 @@ public class RandomDataPopulator
 
         List<OrganisationUnit> ous = new ArrayList<OrganisationUnit>( organisationUnitService.getOrganisationUnitsAtLevel( OU_LEVEL ) );
         Collections.shuffle( ous );
-        ous = ListUtils.subList( ous, 0, 800 );
+        Double maxOus = ous.size() * OU_DENSITY_PERC;
+        ous = ListUtils.subList( ous, 0, maxOus.intValue() );
         
-        log.info( "Organisation units: " + ous.size() );
+        log.info( String.format( "Organisation units: %d, max: %d", ous.size(), maxOus ) );
 
         // ---------------------------------------------------------------------
         // Periods (might fail if not present in database due to single tx)
@@ -90,7 +93,7 @@ public class RandomDataPopulator
 
         List<Period> pes = periodService.reloadIsoPeriods( PERIODS );
         
-        log.info( "Periods: " + pes );
+        log.info( String.format( "Periods: %s", pes ) );
 
         // ---------------------------------------------------------------------
         // Data set
@@ -98,7 +101,7 @@ public class RandomDataPopulator
         
         DataSet dataSet = dataSetService.getDataSet( DS );
         
-        log.info( "Data set: '" + dataSet.getName() + "', data elements: " + dataSet.getDataElements().size() );
+        log.info( String.format( "Data set: '%s', data elements: %d", dataSet.getName(), dataSet.getDataElements().size() ) );
 
         // ---------------------------------------------------------------------
         // Category option combinations
@@ -108,7 +111,7 @@ public class RandomDataPopulator
 
         Set<DataElementCategoryOptionCombo> aocs = dataSet != null ? dataSet.getCategoryCombo().getOptionCombos() : Sets.newHashSet( defaultAoc );
         
-        log.info( "Attribute option combos: " + aocs );
+        log.info( String.format( "Attribute option combos: %s", aocs ) );
         
         // ---------------------------------------------------------------------
         // Weight data
@@ -121,7 +124,7 @@ public class RandomDataPopulator
         
         Map<String, String> orgUnitValueMap = values.stream().collect( Collectors.toMap( v -> v.getSource().getUid(), v -> v.getValue() ) );
                 
-        log.info( "Weight data values: " + orgUnitValueMap.keySet().size() );
+        log.info( String.format( "Weight data values: %d", orgUnitValueMap.keySet().size() ) );
         
         // ---------------------------------------------------------------------
         // Setup and generation
@@ -139,7 +142,7 @@ public class RandomDataPopulator
         
         for ( Period pe : pes )
         {
-            log.info( "Generating data for period: " + pe );
+            log.info( String.format( "Generating data for period: %s", pe ) );
             
             double peFactor = ( ( r.nextInt( 60 ) + 70 ) / 100d );
             
@@ -166,12 +169,14 @@ public class RandomDataPopulator
                 }
             }
             
-            log.info( "Done for " + ( ++peCount ) + " out of " + peTotal );
+            peCount++;
+            
+            log.info( String.format( "Done for %d out of %d", peCount, peTotal ) );
         }
         
         handler.flush();
         
-        log.info( "Data population completed, added " + dvCount + " data values" );
+        log.info( String.format( "Data population completed, added %d data values", dvCount ) );
     }
     
     private Integer getVal( String value, double peFactor, double deFactor )
