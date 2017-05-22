@@ -37,13 +37,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
 
+/**
+ * Populator for generating data values. Change the variables in configuration
+ * to your needs.
+ * <p>
+ * The configuration is based on a data set. Data will be generated for all
+ * data elements in the data set and their disaggregation categories and for the
+ * attribute categories of the data set.
+ */
 public class RandomDataPopulator
 {
     // -------------------------------------------------------------------------
     // Configuration
     // -------------------------------------------------------------------------
 
-    private static final String DS = "Lpw6GcnTrmS"; // Data set to populate
+    private static final String DS = "Nyh6laLdBEJ"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
     private static final double OU_DENSITY_PERCENTAGE = 0.3d; // Percentage of org units to populate
     private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
@@ -94,7 +102,7 @@ public class RandomDataPopulator
         throws Exception
     {
         Clock clock = new Clock( log ).startClock();
-        
+                
         log.info( String.format( "Using random values: %b", USE_RANDOM_VALUES ) );
         
         // ---------------------------------------------------------------------
@@ -114,7 +122,7 @@ public class RandomDataPopulator
         
         DataSet dataSet = dataSetService.getDataSet( DS );
         
-        log.info( String.format( "Data set: '%s', data elements: %d", dataSet.getName(), dataSet.getDataElements().size() ) );
+        log.info( String.format( "Data set: '%s', period type: %s, data elements: %d", dataSet.getName(), dataSet.getPeriodType().getName(), dataSet.getDataElements().size() ) );
 
         // ---------------------------------------------------------------------
         // Periods (might fail if not present in database due to single tx)
@@ -122,6 +130,7 @@ public class RandomDataPopulator
 
         CalendarPeriodType periodType = (CalendarPeriodType) dataSet.getPeriodType();
         List<Period> pes = periodType.generatePeriods( START_DATE, END_DATE );
+        pes = periodService.reloadPeriods( pes );
                 
         log.info( String.format( "Periods: %d: %s", pes.size(), pes ) );
 
@@ -162,7 +171,7 @@ public class RandomDataPopulator
             
         for ( Period pe : pes )
         {
-            log.info( String.format( "Generating data for period: %s", pe ) );
+            log.info( String.format( "Generating data for period: %s, %s", pe.getIsoDate(), pe ) );
             
             double peFactor = ( ( 70 + r.nextInt( 60 ) ) / 100d );
             
@@ -190,6 +199,8 @@ public class RandomDataPopulator
                                 {
                                     DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( value ), "", d, "" );
                                     handler.addObject( dv );
+                                    
+                                    log.trace( String.format( "Added value: %s", dv ) );
                                 }
                                 
                                 dvCount++;
@@ -201,12 +212,12 @@ public class RandomDataPopulator
             
             peCount++;
             
-            log.info( String.format( "Done for %d out of %d", peCount, peTotal ) );
+            log.info( String.format( "Done for %d (%s) out of %d", peCount, pe.getIsoDate(), peTotal ) );
         }
         
         handler.flush();
 
-        clock.logTime( String.format( "Data population completed, values added: %", dvCount ) );
+        clock.logTime( String.format( "Data population completed, values added: %d", dvCount ) );
     }
     
     private Integer getCorrelatedVal( String value, double peFactor, double deFactor )

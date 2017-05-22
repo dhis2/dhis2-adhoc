@@ -3,6 +3,7 @@ package org.hisp.dhis.adhoc;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
@@ -66,6 +67,7 @@ public class RunMe
         {
             Object command = context.getBean( id );
             
+            log.info( StringUtils.EMPTY );
             log.info( String.format( "Executing command: %s", id ) );
             
             invokeCommand( command );

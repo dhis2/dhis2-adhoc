@@ -11,5 +11,6 @@
     <bean id="randomDataUsagePopulator" class="org.hisp.dhis.adhoc.command.RandomDataUsagePopulator" />
 	<bean id="analyticsTableGenerator" class="org.hisp.dhis.adhoc.command.AnalyticsTableGenerator" />	
 	<bean id="listSortOrderFixer" class="org.hisp.dhis.adhoc.command.ListSortOrderFixer" />
+	<bean id="periodPopulator" class="org.hisp.dhis.adhoc.command.PeriodPopulator" />
 	
 </beans>

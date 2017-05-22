@@ -63,4 +63,8 @@
     
   </dependencies>
   
+  <build>
+    <finalName>dhis-adhoc</finalName>    
+  </build>
+  
 </project>
