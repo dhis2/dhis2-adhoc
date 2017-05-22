@@ -45,12 +45,17 @@ public class RandomDataPopulator
 
     private static final String DS = "Lpw6GcnTrmS"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
-    private static final double OU_DENSITY_PERCENTAGE = 0.6d; // Percentage of org units to populate
+    private static final double OU_DENSITY_PERCENTAGE = 0.3d; // Percentage of org units to populate
     private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
     private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
     
+    private static final boolean USE_RANDOM_VALUES = true; // Whether to use correlated or random values
     private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for generation
     private static final String PE_WEIGHT = "2016"; // Period to use as basis for generation
+    private static final int RANDOM_MIN = 0; // Minimum random value
+    private static final int RANDOM_MAX = 10; // Maximum random value
+    
+    private static final boolean DRY_RUN = false; // Whether to perform a dry run and not persist any values
 
     // -------------------------------------------------------------------------
     // Dependencies
@@ -89,6 +94,8 @@ public class RandomDataPopulator
         throws Exception
     {
         Clock clock = new Clock( log ).startClock();
+        
+        log.info( String.format( "Using random values: %b", USE_RANDOM_VALUES ) );
         
         // ---------------------------------------------------------------------
         // Organisation units
@@ -157,7 +164,7 @@ public class RandomDataPopulator
         {
             log.info( String.format( "Generating data for period: %s", pe ) );
             
-            double peFactor = ( ( r.nextInt( 60 ) + 70 ) / 100d );
+            double peFactor = ( ( 70 + r.nextInt( 60 ) ) / 100d );
             
             for ( OrganisationUnit ou : ous )
             {                
@@ -165,7 +172,7 @@ public class RandomDataPopulator
             
                 for ( DataElement de : dataSet.getDataElements() )
                 {
-                    double deFactor = ( ( r.nextInt( 60 ) + 70 ) / 100d );
+                    double deFactor = ( ( 70 + r.nextInt( 60 ) ) / 100d );
                     
                     for ( DataElementCategoryOptionCombo coc : de.getCategoryOptionCombos() )
                     {
@@ -173,8 +180,18 @@ public class RandomDataPopulator
                         {
                             if ( val != null )
                             {
-                                DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( getVal( val, peFactor, deFactor ) ), "", d, "" );
-                                handler.addObject( dv );
+                                Integer value = USE_RANDOM_VALUES ? 
+                                    getRandomVal( peFactor, deFactor ) : 
+                                    getCorrelatedVal( val, peFactor, deFactor );
+                                    
+                                log.trace( String.format( "Value: %d", value ) );
+                                
+                                if ( !DRY_RUN )
+                                {
+                                    DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( value ), "", d, "" );
+                                    handler.addObject( dv );
+                                }
+                                
                                 dvCount++;
                             }
                         }
@@ -188,11 +205,11 @@ public class RandomDataPopulator
         }
         
         handler.flush();
-        
+
         clock.logTime( String.format( "Data population completed, values added: %", dvCount ) );
     }
     
-    private Integer getVal( String value, double peFactor, double deFactor )
+    private Integer getCorrelatedVal( String value, double peFactor, double deFactor )
     {
         Random r = new Random();
         Double val = Double.parseDouble( value );
@@ -200,5 +217,15 @@ public class RandomDataPopulator
         Double weightedVal = ( val * 0.2 ) + delta;
         weightedVal = weightedVal * peFactor * deFactor;
         return weightedVal.intValue();
-    }    
+    }
+    
+    private Integer getRandomVal( double peFactor, double deFactor )
+    {
+        Random r = new Random();
+        int diff = RANDOM_MAX - RANDOM_MIN;
+        Double random = ( r.nextDouble() * diff * peFactor * deFactor ) + RANDOM_MIN;
+        random = Math.max( random, RANDOM_MIN );
+        random = Math.min( random, RANDOM_MAX );
+        return random.intValue();
+    }
 }
