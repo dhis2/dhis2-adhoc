@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
 import org.hisp.dhis.common.IdentifiableObjectManager;
-import org.hisp.dhis.common.comparator.IdentifiableObjectCodeComparator;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class ListSortOrderFixer
             }
         }
         
-        Collections.sort( os.getOptions(), IdentifiableObjectCodeComparator.INSTANCE );
+        Collections.sort( os.getOptions() );
         
         idObjectManager.update( os );
     }

@@ -38,10 +38,10 @@ public class RandomOptionSetEventPopulator
     // Configuration
     // -------------------------------------------------------------------------
 
-    private static final String PR = "bMcwwoVnbSR";
+    private static final String PR = "bMcwwoVnbSR"; // Program to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
-    private static final int START_YEAR = 2016;
-    private static final int EVENT_NO = 20;
+    private static final int START_YEAR = 2016; // Start year for two-year period to populate
+    private static final int EVENT_NO = 20; // Number of events to create
 
     // -------------------------------------------------------------------------
     // Dependencies

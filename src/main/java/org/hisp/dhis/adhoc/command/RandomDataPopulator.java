@@ -22,6 +22,7 @@ import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.DataSetService;
+import org.hisp.dhis.datavalue.DataExportParams;
 import org.hisp.dhis.datavalue.DataValue;
 import org.hisp.dhis.datavalue.DataValueService;
 import org.hisp.dhis.jdbc.batchhandler.DataValueBatchHandler;
@@ -156,7 +157,12 @@ public class RandomDataPopulator
         DataElement deWeight = dataElementService.getDataElement( DE_WEIGHT );
         Period peWeight = periodService.reloadIsoPeriod( PE_WEIGHT );
         
-        Collection<DataValue> values = dataValueService.getDataValues( Sets.newHashSet( deWeight ), Sets.newHashSet( peWeight ), ous );
+        DataExportParams params = new DataExportParams()
+            .setDataElements( Sets.newHashSet( deWeight ) )
+            .setPeriods( Sets.newHashSet( peWeight ) )
+            .setOrganisationUnits( Sets.newHashSet( ous ) );
+        
+        Collection<DataValue> values = dataValueService.getDataValues( params );
         
         Map<String, String> orgUnitValueMap = values.stream().collect( Collectors.toMap( v -> v.getSource().getUid(), v -> v.getValue() ) );
         
