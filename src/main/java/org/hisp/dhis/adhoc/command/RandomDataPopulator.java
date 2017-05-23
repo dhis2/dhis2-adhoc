@@ -52,7 +52,7 @@ public class RandomDataPopulator
     // Configuration
     // -------------------------------------------------------------------------
 
-    private static final String DS = "Nyh6laLdBEJ"; // Data set to populate
+    private static final String DS = "a6SeIOU592j"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
     private static final double OU_DENSITY_PERCENTAGE = 0.1d; // Percentage of org units to populate
     
@@ -60,9 +60,9 @@ public class RandomDataPopulator
     private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
     private static final double PERIOD_DENSITY_PERCENTAGE = 0.3d; // Percentage of periods to populate
     
-    private static final boolean USE_RANDOM_VALUES = true; // Whether to use correlated or random values
-    private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for generation
-    private static final String PE_WEIGHT = "2016"; // Period to use as basis for generation
+    private static final boolean USE_RANDOM_VALUES = true; // Whether to use data element correlated or random values
+    private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for correlated generation
+    private static final String PE_WEIGHT = "2016"; // Period to use as basis for correlated generation
     private static final int RANDOM_MIN = 0; // Minimum random value
     private static final int RANDOM_MAX = 5; // Maximum random value
     

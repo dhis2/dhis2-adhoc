@@ -41,7 +41,7 @@ public class RandomOptionSetEventPopulator
     private static final String PR = "bMcwwoVnbSR"; // Program to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
     private static final int START_YEAR = 2016; // Start year for two-year period to populate
-    private static final int EVENT_NO = 20; // Number of events to create
+    private static final int EVENT_NO = 10000; // Number of events to create
 
     // -------------------------------------------------------------------------
     // Dependencies
@@ -114,8 +114,7 @@ public class RandomOptionSetEventPopulator
         long s = t.getTimeInS();
         double a = EVENT_NO / Math.max( s, 1 );
         
-        log.info( summaries );
-        
+        log.info( "Event import: " + summaries.toMinimalString() );        
         log.info( "Event population done, seconds: " + s + ", event/s: " + a );
     }
     
