@@ -100,7 +100,7 @@ public class RandomEnrollmentPopulator
         {
             int programStageInstanceCount = 0;
             
-            DateTime date = new DateTime( DateTime.now().getYear() - 1, 1, 1, 12, 5 ).plusDays( new Random().nextInt( 363 ) );
+            DateTime date = new DateTime( DateTime.now().getYear(), 1, 1, 12, 5 ).plusDays( new Random().nextInt( 363 ) );
             
             OrganisationUnit ou = ous.get( new Random().nextInt( ous.size() ) );
             
