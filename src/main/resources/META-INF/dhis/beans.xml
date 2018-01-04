@@ -10,7 +10,7 @@
     <bean id="randomChildrenPopulator" class="org.hisp.dhis.adhoc.command.RandomChildrenPopulator" />
     <bean id="randomEnrollmentPopulator" class="org.hisp.dhis.adhoc.command.RandomEnrollmentPopulator" />
     <bean id="randomDataUsagePopulator" class="org.hisp.dhis.adhoc.command.RandomDataUsagePopulator" />
-	<bean id="analyticsTableGenerator" class="org.hisp.dhis.adhoc.command.AnalyticsTableGenerator" />	
+	<bean id="analyticsTablePopulator" class="org.hisp.dhis.adhoc.command.AnalyticsTablePopulator" />	
 	<bean id="listSortOrderFixer" class="org.hisp.dhis.adhoc.command.ListSortOrderFixer" />
 	<bean id="periodPopulator" class="org.hisp.dhis.adhoc.command.PeriodPopulator" />
 	
