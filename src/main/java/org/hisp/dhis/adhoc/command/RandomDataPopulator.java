@@ -52,9 +52,9 @@ public class RandomDataPopulator
     // Configuration
     // -------------------------------------------------------------------------
 
-    private static final String DS = "a6SeIOU592j"; // Data set to populate
+    private static final String DS = "Nyh6laLdBEJ"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
-    private static final double OU_DENSITY_PERCENTAGE = 0.1d; // Percentage of org units to populate
+    private static final double OU_DENSITY_PERCENTAGE = 0.2d; // Percentage of org units to populate
     
     private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
     private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate(); // End date for periods to populate

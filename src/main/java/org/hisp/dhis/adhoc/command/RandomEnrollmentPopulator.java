@@ -19,10 +19,10 @@ import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.program.ProgramStageDataElement;
 import org.hisp.dhis.program.ProgramStageInstance;
 import org.hisp.dhis.program.ProgramStageInstanceService;
-import org.hisp.dhis.trackedentity.TrackedEntity;
 import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
 import org.hisp.dhis.trackedentity.TrackedEntityInstance;
 import org.hisp.dhis.trackedentity.TrackedEntityInstanceService;
+import org.hisp.dhis.trackedentity.TrackedEntityType;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeReservedValueService;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValue;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValueService;
@@ -68,7 +68,7 @@ public class RandomEnrollmentPopulator
         
         List<OrganisationUnit> ous = new ArrayList<OrganisationUnit>( p.getOrganisationUnits() );
         
-        TrackedEntity te = p.getTrackedEntity();
+        TrackedEntityType te = p.getTrackedEntityType();
         boolean isWoman = te.getName().toLowerCase().contains( "mnch" ) ? true : new Random().nextBoolean();
         
         int totalProgramStageInstanceCount = 0;
@@ -83,7 +83,7 @@ public class RandomEnrollmentPopulator
             
             TrackedEntityInstance tei = new TrackedEntityInstance();
             
-            tei.setTrackedEntity( te );
+            tei.setTrackedEntityType( te );
             tei.setOrganisationUnit( ou );
             
             teiService.addTrackedEntityInstance( tei );

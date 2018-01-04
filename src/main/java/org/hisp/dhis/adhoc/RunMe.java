@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
 import org.hisp.dhis.system.util.AnnotationUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.google.common.collect.ImmutableList;
@@ -41,7 +40,7 @@ public class RunMe
     /**
      * Add commands here by adding the bean identifier to the list.
      */
-    private static final ImmutableList<String> COMMANDS = ImmutableList.of( "randomDataPopulator" ); // Change this
+    private static final ImmutableList<String> COMMANDS = ImmutableList.of( "exampleCommand" ); // Change this
 
     // -------------------------------------------------------------------------
     // RunMe
@@ -49,7 +48,7 @@ public class RunMe
 
     private static final Log log = LogFactory.getLog( RunMe.class );
     
-    private static ApplicationContext context;
+    private static ClassPathXmlApplicationContext context;
         
     public static void main( String[] args )
         throws Exception
@@ -59,6 +58,8 @@ public class RunMe
         log.info( "Initializing Spring context" );
         
         context = new ClassPathXmlApplicationContext( "classpath*:/META-INF/dhis/beans.xml" );
+        
+        disallowCircularDependencies( context );
         
         log.info( "Spring context initialized" );
         
@@ -75,6 +76,12 @@ public class RunMe
         }
         
         log.info( "Process completed" );
+    }
+    
+    private static void disallowCircularDependencies( ClassPathXmlApplicationContext context )
+    {
+        context.setAllowCircularReferences( false );
+        context.refresh();        
     }
         
     private static void invokeCommand( Object object )

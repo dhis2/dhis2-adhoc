@@ -26,12 +26,12 @@ import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.program.ProgramStageInstance;
 import org.hisp.dhis.program.ProgramStageInstanceService;
 import org.hisp.dhis.program.ProgramStageService;
-import org.hisp.dhis.trackedentity.TrackedEntity;
 import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
 import org.hisp.dhis.trackedentity.TrackedEntityAttributeService;
 import org.hisp.dhis.trackedentity.TrackedEntityInstance;
 import org.hisp.dhis.trackedentity.TrackedEntityInstanceService;
-import org.hisp.dhis.trackedentity.TrackedEntityService;
+import org.hisp.dhis.trackedentity.TrackedEntityType;
+import org.hisp.dhis.trackedentity.TrackedEntityTypeService;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValue;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValueService;
 import org.hisp.dhis.trackedentitydatavalue.TrackedEntityDataValue;
@@ -51,7 +51,7 @@ public class RandomChildrenPopulator
     private TrackedEntityInstanceService teiService;
     
     @Autowired
-    private TrackedEntityService teService;
+    private TrackedEntityTypeService teService;
     
     @Autowired
     private ProgramService programService;
@@ -88,7 +88,7 @@ public class RandomChildrenPopulator
     public void execute()
         throws Exception
     {
-        TrackedEntity person = teService.getTrackedEntity( "cyl5vuJ5ETQ" );
+        TrackedEntityType person = teService.getTrackedEntityType( "cyl5vuJ5ETQ" );
         
         Program pr = programService.getProgram( "IpHINAT79UW" );
         ProgramStage ps1 = programStageService.getProgramStage( "A03MvHHogjR" );
@@ -148,7 +148,7 @@ public class RandomChildrenPopulator
             TrackedEntityInstance tei = new TrackedEntityInstance();
             
             tei.setOrganisationUnit( ou );
-            tei.setTrackedEntity( person );
+            tei.setTrackedEntityType( person );
             
             teiService.addTrackedEntityInstance( tei );
             
