@@ -10,7 +10,7 @@ public class ContextChecker
     /**
      * Sets location of DHIS 2 home directory.
      */
-    public static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this to your environment
+    private static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this to your environment
     
     public static void main( String[] args )
     {

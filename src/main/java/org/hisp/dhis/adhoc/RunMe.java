@@ -36,7 +36,7 @@ public class RunMe
     /**
      * Change location of DHIS 2 home to match your environment.
      */
-    public static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this to your environment
+    private static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this to your environment
 
     /**
      * Add commands here by adding the bean identifier to the list.
