@@ -36,12 +36,12 @@ public class RunMe
     /**
      * Change location of DHIS 2 home to match your environment.
      */
-    private static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this
+    public static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this
 
     /**
      * Add commands here by adding the bean identifier to the list.
      */
-    private static final ImmutableList<String> COMMANDS = ImmutableList.of( "exampleCommand" ); // Change this
+    private static final ImmutableList<String> COMMANDS = ImmutableList.of( "contextChecker" ); // Change this
 
     // -------------------------------------------------------------------------
     // RunMe
