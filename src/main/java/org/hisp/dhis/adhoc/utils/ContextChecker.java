@@ -1,6 +1,5 @@
 package org.hisp.dhis.adhoc.utils;
 
-import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
