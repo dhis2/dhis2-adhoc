@@ -10,10 +10,12 @@ public class ContextChecker
 {
     public static void main( String[] args )
     {
-        AbstractRefreshableApplicationContext ctx = new ClassPathXmlApplicationContext(
-            "classpath*:/META-INF/dhis/beans.xml" );
-        ctx.setAllowCircularReferences( false );
-        ctx.refresh();
-        ctx.close();
+        String configLocation = "classpath*:/META-INF/dhis/beans.xml";
+        
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext( configLocation );
+        
+        context.setAllowCircularReferences( false );
+        context.refresh();
+        context.close();
     }
 }
