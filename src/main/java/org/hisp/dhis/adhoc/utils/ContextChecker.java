@@ -8,9 +8,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ContextChecker
 {
     /**
-     * Change location of DHIS 2 home to match your environment.
+     * Sets location of DHIS 2 home directory.
      */
-    public static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this
+    public static final String DHIS2_HOME = "/home/lars/dev/config/dhis"; // Change this to your environment
     
     public static void main( String[] args )
     {
