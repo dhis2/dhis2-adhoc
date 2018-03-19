@@ -109,7 +109,7 @@ public class RandomOptionSetEventPopulator
 
         Timer t = new Timer().start();
         
-        ImportSummaries summaries = eventService.addEvents( events, new ImportOptions() );
+        ImportSummaries summaries = eventService.addEvents( events, new ImportOptions(), false );
         
         long s = t.getTimeInS();
         double a = EVENT_NO / Math.max( s, 1 );

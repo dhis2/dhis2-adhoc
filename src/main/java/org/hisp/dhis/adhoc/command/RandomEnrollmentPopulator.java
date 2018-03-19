@@ -23,7 +23,6 @@ import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
 import org.hisp.dhis.trackedentity.TrackedEntityInstance;
 import org.hisp.dhis.trackedentity.TrackedEntityInstanceService;
 import org.hisp.dhis.trackedentity.TrackedEntityType;
-import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeReservedValueService;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValue;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValueService;
 import org.hisp.dhis.trackedentitydatavalue.TrackedEntityDataValue;
@@ -50,9 +49,6 @@ public class RandomEnrollmentPopulator
 
     @Autowired
     private TrackedEntityAttributeValueService attributeValueService;
-    
-    @Autowired
-    private TrackedEntityAttributeReservedValueService attributeReservedValueService;
     
     @Autowired
     private TrackedEntityDataValueService dataValueService;
@@ -94,7 +90,7 @@ public class RandomEnrollmentPopulator
                 
                 if ( att.isGenerated() )
                 {
-                    attributeValueService.addTrackedEntityAttributeValue( new TrackedEntityAttributeValue( att, tei, attributeReservedValueService.getGeneratedValue( att ) ) );
+                    attributeValueService.addTrackedEntityAttributeValue( new TrackedEntityAttributeValue( att, tei, null ) ); //TODO reserve value
                 }
                 else if ( an.contains( "first" ) && an.contains( "name" ) ) 
                 {

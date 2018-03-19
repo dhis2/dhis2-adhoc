@@ -76,7 +76,7 @@ public class RandomEventPopulator
 
         Timer t = new Timer().start();
                 
-        eventService.addEvents( events, new ImportOptions() );
+        eventService.addEvents( events, new ImportOptions(), false );
         
         long s = t.getTimeInS();
         double a = EVENT_NO / s;
