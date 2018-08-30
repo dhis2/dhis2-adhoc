@@ -1,24 +1,22 @@
 package org.hisp.dhis.adhoc.command;
 
 import org.hisp.dhis.adhoc.annotation.Executed;
-import org.hisp.dhis.scheduling.JobConfiguration;
-import org.hisp.dhis.scheduling.JobType;
-import org.hisp.dhis.scheduling.SchedulingManager;
-import org.hisp.dhis.scheduling.parameters.AnalyticsJobParameters;
+import org.hisp.dhis.analytics.AnalyticsTableGenerator;
+import org.hisp.dhis.analytics.AnalyticsTableUpdateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AnalyticsTablePopulator
 {
     @Autowired
-    private SchedulingManager schedulingManager;
+    private AnalyticsTableGenerator generator;
     
     @Executed
     public void execute()
     {
-        AnalyticsJobParameters analyticsJobParameters = new AnalyticsJobParameters();
-
-        JobConfiguration analyticsTableJob = new JobConfiguration( "inMemoryAnalyticsJob", JobType.ANALYTICS_TABLE, "", analyticsJobParameters, false, true, true );
-
-        schedulingManager.executeJob( analyticsTableJob );
+        AnalyticsTableUpdateParams params = AnalyticsTableUpdateParams.newBuilder()
+            .withLastYears( 1 )
+            .build();
+        
+        generator.generateTables( params );
     }
 }
