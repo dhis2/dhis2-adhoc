@@ -16,9 +16,9 @@ import org.joda.time.DateTime;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
+import org.hisp.dhis.category.CategoryOptionCombo;
+import org.hisp.dhis.category.CategoryService;
 import org.hisp.dhis.dataelement.DataElement;
-import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
-import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.DataSetService;
@@ -52,17 +52,17 @@ public class RandomDataPopulator
     // Configuration
     // -------------------------------------------------------------------------
 
-    private static final String DS = "Nyh6laLdBEJ"; // Data set to populate
+    private static final String DS = "rsyjyJmYD4J"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
-    private static final double OU_DENSITY_PERCENTAGE = 0.2d; // Percentage of org units to populate
+    private static final double OU_DENSITY_PERCENTAGE = 0.5d; // Percentage of org units to populate
     
-    private static final Date START_DATE = new DateTime( 2016, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
-    private static final Date END_DATE = new DateTime( 2017, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
-    private static final double PERIOD_DENSITY_PERCENTAGE = 0.3d; // Percentage of periods to populate
+    private static final Date START_DATE = new DateTime( 2017, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
+    private static final Date END_DATE = new DateTime( 2018, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
+    private static final double PERIOD_DENSITY_PERCENTAGE = 1.0d; // Percentage of periods to populate
     
-    private static final boolean USE_RANDOM_VALUES = true; // Whether to use data element correlated or random values
-    private static final String DE_WEIGHT = "h0xKKjijTdI"; // Data element to use as basis for correlated generation
-    private static final String PE_WEIGHT = "2016"; // Period to use as basis for correlated generation
+    private static final boolean USE_RANDOM_VALUES = false; // Whether to use data element correlated or random values
+    private static final String DE_WEIGHT = "WUg3MYWQ7pt"; // Data element to use as basis for correlated generation
+    private static final String PE_WEIGHT = "2017"; // Period to use as basis for correlated generation
     private static final int RANDOM_MIN = 0; // Minimum random value
     private static final int RANDOM_MAX = 5; // Maximum random value
     
@@ -84,7 +84,7 @@ public class RandomDataPopulator
     private PeriodService periodService;
     
     @Autowired
-    private DataElementCategoryService categoryService;
+    private CategoryService categoryService;
     
     @Autowired
     private BatchHandlerFactory batchHandlerFactory;
@@ -144,9 +144,9 @@ public class RandomDataPopulator
         // Category option combinations
         // ---------------------------------------------------------------------
         
-        DataElementCategoryOptionCombo defaultAoc = categoryService.getDefaultDataElementCategoryOptionCombo();
+        CategoryOptionCombo defaultAoc = categoryService.getDefaultCategoryOptionCombo();
 
-        Set<DataElementCategoryOptionCombo> aocs = dataSet != null ? dataSet.getCategoryCombo().getOptionCombos() : Sets.newHashSet( defaultAoc );
+        Set<CategoryOptionCombo> aocs = dataSet != null ? dataSet.getCategoryCombo().getOptionCombos() : Sets.newHashSet( defaultAoc );
         
         log.info( String.format( "Attribute option combos: %d: %s", aocs.size(), aocs ) );
         
@@ -194,9 +194,9 @@ public class RandomDataPopulator
                 {
                     double deFactor = ( ( 50 + r.nextInt( 100 ) ) / 100d );
                     
-                    for ( DataElementCategoryOptionCombo coc : de.getCategoryOptionCombos() )
+                    for ( CategoryOptionCombo coc : de.getCategoryOptionCombos() )
                     {
-                        for ( DataElementCategoryOptionCombo aoc : aocs )
+                        for ( CategoryOptionCombo aoc : aocs )
                         {
                             if ( val != null )
                             {

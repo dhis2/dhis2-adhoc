@@ -7,8 +7,8 @@ import java.util.Random;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
+import org.hisp.dhis.category.CategoryOptionCombo;
 import org.hisp.dhis.dataelement.DataElement;
-import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
 import org.hisp.dhis.dxf2.common.ImportOptions;
 import org.hisp.dhis.dxf2.events.event.DataValue;
 import org.hisp.dhis.dxf2.events.event.Event;
@@ -69,7 +69,7 @@ public class RandomOptionSetEventPopulator
         Program program = programService.getProgram( PR );
         ProgramStage stage = program.getProgramStages().iterator().next();
         List<DataElement> dataElements = stage.getAllDataElements();
-        List<DataElementCategoryOptionCombo> aocs = program.getCategoryCombo().getSortedOptionCombos();
+        List<CategoryOptionCombo> aocs = program.getCategoryCombo().getSortedOptionCombos();
 
         log.info( String.format( "Program: %s, '%s', stage: %s", program.getUid(), program.getName(), stage.getUid() ) );
         log.info( String.format( "Category combo: %s", program.getCategoryCombo().getName() ) );

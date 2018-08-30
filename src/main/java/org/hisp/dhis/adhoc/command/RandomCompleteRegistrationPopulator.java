@@ -11,10 +11,10 @@ import org.hisp.quick.BatchHandlerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
+import org.hisp.dhis.category.CategoryOptionCombo;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableProperty;
 import org.hisp.dhis.commons.collection.ListUtils;
-import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
 import org.hisp.dhis.dataset.CompleteDataSetRegistration;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.jdbc.batchhandler.CompleteDataSetRegistrationBatchHandler;
@@ -87,7 +87,7 @@ public class RandomCompleteRegistrationPopulator
 
         for ( DataSet ds : dss )
         {
-            for ( DataElementCategoryOptionCombo aoc : ds.getCategoryCombo().getOptionCombos() )
+            for ( CategoryOptionCombo aoc : ds.getCategoryCombo().getOptionCombos() )
             {
                 for ( Period pe : pes )
                 {
