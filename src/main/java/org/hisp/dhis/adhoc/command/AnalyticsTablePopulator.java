@@ -14,7 +14,6 @@ public class AnalyticsTablePopulator
     public void execute()
     {
         AnalyticsTableUpdateParams params = AnalyticsTableUpdateParams.newBuilder()
-            .withLastYears( 1 )
             .build();
         
         generator.generateTables( params );
