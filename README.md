@@ -18,7 +18,7 @@ Command classes must be annotated with the `@Executed` annotation, mapped as a S
 
 **Step 1**: Create a command class. Put this class in the `org.hisp.dhis.adhoc.command` package. An example command can look like this:
 
-```
+```java
 public class GetSystemInfoCommand
 {
     @Autowired
@@ -37,13 +37,13 @@ public class GetSystemInfoCommand
 
 **Step 2**: Add the command as a Spring bean in `beans.xml`. As an example:
 
-```
+```xml
 <bean id="getSystemInfoCommand" class="org.hisp.dhis.adhoc.command.GetSystemInfoCommand" /> 
 ```
 
 **Step 3**: In class `RunMe.java`, include the bean identifier of your command bean in the `COMMANDS` list. As an example:
 
-```
+```java
 ImmutableList<String> COMMANDS = ImmutableList.of( "getSystemInfoCommand" );
 ```
 
