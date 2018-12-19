@@ -48,13 +48,13 @@ public class RandomOptionSetEventPopulator
     // -------------------------------------------------------------------------
 
     private static final Log log = LogFactory.getLog( RandomOptionSetEventPopulator.class );
-        
+
     @Autowired
     private EventService eventService;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
     private OrganisationUnitService organisationUnitService;
 
@@ -73,18 +73,18 @@ public class RandomOptionSetEventPopulator
 
         log.info( String.format( "Program: %s, '%s', stage: %s", program.getUid(), program.getName(), stage.getUid() ) );
         log.info( String.format( "Category combo: %s", program.getCategoryCombo().getName() ) );
-        
+
         List<OrganisationUnit> ous = new ArrayList<OrganisationUnit>( organisationUnitService.getOrganisationUnitsAtLevel( OU_LEVEL ) );
-        
+
         List<Event> events = new ArrayList<Event>();
-        
+
         Assert.notNull( program, String.format( "Program must be specified: %s", PR ) );
         Assert.isTrue( !dataElements.isEmpty(), "At least one data element must be part of program" );
-        
+
         for ( int i = 0; i < EVENT_NO; i++ )
         {
             DateTime date = new DateTime( START_YEAR, 1, 1, 12, 5 ).plusDays( new Random().nextInt( 726 ) );
-            
+
             Event event = new Event();
             event.setStatus( EventStatus.COMPLETED );
             event.setProgram( program.getUid() );
@@ -92,32 +92,32 @@ public class RandomOptionSetEventPopulator
             event.setOrgUnit( ous.get( new Random().nextInt( ous.size() ) ).getUid() );
             event.setEventDate( DateUtils.getLongDateString( date.toDate() ) );
             event.setAttributeOptionCombo( aocs.get( new Random().nextInt( aocs.size() ) ).getUid() );
-            
+
             for ( DataElement de : dataElements )
             {
                 Assert.isTrue( de.hasOptionSet(), String.format( "Data element must have option set: %s", de.getUid() ) );
-                
+
                 DataValue dv = new DataValue( de.getUid(), getRandomOption( de.getOptionSet() ) );
-                
+
                 event.getDataValues().add( dv );
             }
-            
+
             events.add( event );
         }
-        
+
         log.info( "Populating events: " + events.size() );
 
         Timer t = new Timer().start();
-        
+
         ImportSummaries summaries = eventService.addEvents( events, new ImportOptions(), false );
-        
+
         long s = t.getTimeInS();
         double a = EVENT_NO / Math.max( s, 1 );
-        
-        log.info( "Event import: " + summaries.toMinimalString() );        
+
+        log.info( "Event import: " + summaries.toMinimalString() );
         log.info( "Event population done, seconds: " + s + ", event/s: " + a );
     }
-    
+
     private String getRandomOption( OptionSet optionSet )
     {
         int size = optionSet.getOptions().size();

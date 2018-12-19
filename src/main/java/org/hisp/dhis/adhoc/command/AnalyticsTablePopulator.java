@@ -9,13 +9,13 @@ public class AnalyticsTablePopulator
 {
     @Autowired
     private AnalyticsTableGenerator generator;
-    
+
     @Executed
     public void execute()
     {
         AnalyticsTableUpdateParams params = AnalyticsTableUpdateParams.newBuilder()
             .build();
-        
+
         generator.generateTables( params );
     }
 }

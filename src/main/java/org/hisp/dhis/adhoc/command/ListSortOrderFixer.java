@@ -15,20 +15,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class ListSortOrderFixer
 {
     private static final Log log = LogFactory.getLog( ListSortOrderFixer.class );
-    
+
     @Autowired
     private IdentifiableObjectManager idObjectManager;
-    
+
     @Executed
     @Transactional
     public void execute()
     {
         log.info( "Start list sort order fix" );
-        
+
         OptionSet os = idObjectManager.get( OptionSet.class, "eUZ79clX7y1" ); // ICD10
-        
+
         Iterator<Option> options = os.getOptions().iterator();
-        
+
         while ( options.hasNext() )
         {
             if ( options.next() == null )
@@ -36,9 +36,9 @@ public class ListSortOrderFixer
                 options.remove();
             }
         }
-        
+
         Collections.sort( os.getOptions() );
-        
+
         idObjectManager.update( os );
     }
 }

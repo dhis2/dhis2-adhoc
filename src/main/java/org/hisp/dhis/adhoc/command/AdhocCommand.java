@@ -12,7 +12,7 @@ public class AdhocCommand
 {
     @Autowired
     private DatabaseInfoProvider provider;
-    
+
     @Autowired
     private SystemService systemService;
 
@@ -22,11 +22,11 @@ public class AdhocCommand
         throws Exception
     {
         DatabaseInfo dbInfo = provider.getDatabaseInfo();
-        
+
         SystemInfo systemInfo = systemService.getSystemInfo();
-        
+
         System.out.println( dbInfo );
-        
+
         System.out.println( systemInfo.getDatabaseInfo() );
     }
 }

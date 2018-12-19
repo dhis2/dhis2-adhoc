@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
  * to your needs.
  * <p>
  * The configuration is based on a data set. Data will be generated for all
- * data elements in the data set and their categories and for the attribute 
+ * data elements in the data set and their categories and for the attribute
  * categories of the data set.
  */
 public class RandomDataPopulator
@@ -55,17 +55,17 @@ public class RandomDataPopulator
     private static final String DS = "rsyjyJmYD4J"; // Data set to populate
     private static final int OU_LEVEL = 4; // Level of org units to populate
     private static final double OU_DENSITY_PERCENTAGE = 0.5d; // Percentage of org units to populate
-    
+
     private static final Date START_DATE = new DateTime( 2017, 1, 1, 0, 0 ).toDate(); // Start date for periods to populate
     private static final Date END_DATE = new DateTime( 2018, 12, 31, 0, 0 ).toDate(); // End date for periods to populate
     private static final double PERIOD_DENSITY_PERCENTAGE = 1.0d; // Percentage of periods to populate
-    
+
     private static final boolean USE_RANDOM_VALUES = false; // Whether to use data element correlated or random values
     private static final String DE_WEIGHT = "WUg3MYWQ7pt"; // Data element to use as basis for correlated generation
     private static final String PE_WEIGHT = "2017"; // Period to use as basis for correlated generation
     private static final int RANDOM_MIN = 0; // Minimum random value
     private static final int RANDOM_MAX = 5; // Maximum random value
-    
+
     private static final boolean DRY_RUN = false; // Whether to perform a dry run and not persist any values
 
     // -------------------------------------------------------------------------
@@ -73,22 +73,22 @@ public class RandomDataPopulator
     // -------------------------------------------------------------------------
 
     private static final Log log = LogFactory.getLog( RandomDataPopulator.class );
-    
+
     @Autowired
     private DataElementService dataElementService;
-    
+
     @Autowired
     private DataSetService dataSetService;
-        
+
     @Autowired
     private PeriodService periodService;
-    
+
     @Autowired
     private CategoryService categoryService;
-    
+
     @Autowired
     private BatchHandlerFactory batchHandlerFactory;
-    
+
     @Autowired
     private OrganisationUnitService organisationUnitService;
 
@@ -105,9 +105,9 @@ public class RandomDataPopulator
         throws Exception
     {
         Clock clock = new Clock( log ).startClock();
-                
+
         log.info( String.format( "Using random values: %b", USE_RANDOM_VALUES ) );
-        
+
         // ---------------------------------------------------------------------
         // Organisation units
         // ---------------------------------------------------------------------
@@ -116,15 +116,15 @@ public class RandomDataPopulator
         Collections.shuffle( ous );
         Double maxOus = ous.size() * OU_DENSITY_PERCENTAGE;
         ous = ListUtils.subList( ous, 0, maxOus.intValue() );
-        
+
         log.info( String.format( "Organisation units: %d, max: %3.2f", ous.size(), maxOus ) );
 
         // ---------------------------------------------------------------------
         // Data set
         // ---------------------------------------------------------------------
-        
+
         DataSet dataSet = dataSetService.getDataSet( DS );
-        
+
         log.info( String.format( "Data set: '%s', period type: %s, data elements: %d", dataSet.getName(), dataSet.getPeriodType().getName(), dataSet.getDataElements().size() ) );
 
         // ---------------------------------------------------------------------
@@ -137,100 +137,100 @@ public class RandomDataPopulator
         Collections.shuffle( pes );
         Double maxPes = pes.size() * PERIOD_DENSITY_PERCENTAGE;
         pes = ListUtils.subList( pes, 0, maxPes.intValue() );
-                
+
         log.info( String.format( "Periods: %d: %s", pes.size(), pes ) );
 
         // ---------------------------------------------------------------------
         // Category option combinations
         // ---------------------------------------------------------------------
-        
+
         CategoryOptionCombo defaultAoc = categoryService.getDefaultCategoryOptionCombo();
 
         Set<CategoryOptionCombo> aocs = dataSet != null ? dataSet.getCategoryCombo().getOptionCombos() : Sets.newHashSet( defaultAoc );
-        
+
         log.info( String.format( "Attribute option combos: %d: %s", aocs.size(), aocs ) );
-        
+
         // ---------------------------------------------------------------------
         // Weight data
         // ---------------------------------------------------------------------
-        
+
         DataElement deWeight = dataElementService.getDataElement( DE_WEIGHT );
         Period peWeight = periodService.reloadIsoPeriod( PE_WEIGHT );
-        
+
         DataExportParams params = new DataExportParams()
             .setDataElements( Sets.newHashSet( deWeight ) )
             .setPeriods( Sets.newHashSet( peWeight ) )
             .setOrganisationUnits( Sets.newHashSet( ous ) );
-        
+
         Collection<DataValue> values = dataValueService.getDataValues( params );
-        
+
         Map<String, String> orgUnitValueMap = values.stream().collect( Collectors.toMap( v -> v.getSource().getUid(), v -> v.getValue() ) );
-        
+
         // ---------------------------------------------------------------------
         // Setup and generation
         // ---------------------------------------------------------------------
-        
+
         BatchHandler<DataValue> handler = batchHandlerFactory.createBatchHandler( DataValueBatchHandler.class ).init();
 
         Date d = new Date();
-        
+
         int peTotal = pes.size();
         int peCount = 0;
         long dvCount = 0;
 
         Random r = new Random();
-            
+
         for ( Period pe : pes )
         {
             log.info( String.format( "Generating data for period: %s, %s", pe.getIsoDate(), pe ) );
-            
+
             double peFactor = ( ( 70 + r.nextInt( 60 ) ) / 100d );
-            
+
             for ( OrganisationUnit ou : ous )
-            {                
+            {
                 String val = orgUnitValueMap.get( ou.getUid() );
-            
+
                 for ( DataElement de : dataSet.getDataElements() )
                 {
                     double deFactor = ( ( 50 + r.nextInt( 100 ) ) / 100d );
-                    
+
                     for ( CategoryOptionCombo coc : de.getCategoryOptionCombos() )
                     {
                         for ( CategoryOptionCombo aoc : aocs )
                         {
                             if ( val != null )
                             {
-                                Integer value = USE_RANDOM_VALUES ? 
-                                    getRandomVal( peFactor, deFactor ) : 
+                                Integer value = USE_RANDOM_VALUES ?
+                                    getRandomVal( peFactor, deFactor ) :
                                     getCorrelatedVal( val, peFactor, deFactor );
-                                    
+
                                 log.trace( String.format( "Value: %d", value ) );
-                                
+
                                 if ( !DRY_RUN )
                                 {
                                     DataValue dv = new DataValue( de, pe, ou, coc, aoc, String.valueOf( value ), "", d, "" );
                                     handler.addObject( dv );
-                                    
+
                                     log.trace( String.format( "Added value: %s", dv ) );
                                 }
-                                
+
                                 dvCount++;
                             }
                         }
                     }
                 }
             }
-            
+
             peCount++;
-            
+
             log.info( String.format( "Done for %d (%s) out of %d", peCount, pe.getIsoDate(), peTotal ) );
         }
-        
+
         handler.flush();
 
         clock.logTime( String.format( "Data population completed, values added: %d", dvCount ) );
     }
-    
+
     private Integer getCorrelatedVal( String value, double peFactor, double deFactor )
     {
         Random r = new Random();
@@ -240,7 +240,7 @@ public class RandomDataPopulator
         weightedVal = weightedVal * peFactor * deFactor;
         return weightedVal.intValue();
     }
-    
+
     private Integer getRandomVal( double peFactor, double deFactor )
     {
         Random r = new Random();
