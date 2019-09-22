@@ -14,6 +14,7 @@ import org.hisp.dhis.adhoc.annotation.Executed;
 import org.hisp.dhis.adhoc.utils.DataGenerationUtils;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementService;
+import org.hisp.dhis.eventdatavalue.EventDataValue;
 import org.hisp.dhis.option.OptionService;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -34,8 +35,6 @@ import org.hisp.dhis.trackedentity.TrackedEntityType;
 import org.hisp.dhis.trackedentity.TrackedEntityTypeService;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValue;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValueService;
-import org.hisp.dhis.trackedentitydatavalue.TrackedEntityDataValue;
-import org.hisp.dhis.trackedentitydatavalue.TrackedEntityDataValueService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -70,9 +69,6 @@ public class RandomChildrenPopulator
 
     @Autowired
     private TrackedEntityAttributeValueService attributeValueService;
-
-    @Autowired
-    private TrackedEntityDataValueService dataValueService;
 
     @Autowired
     private DataElementService dataElementService;
@@ -170,6 +166,15 @@ public class RandomChildrenPopulator
             psi1.setExecutionDate( date.toDate() );
             psi1.setOrganisationUnit( ou );
 
+            Set<EventDataValue> dvs1 = new HashSet<>();
+            dvs1.add( new EventDataValue( deApgar.getUid(), String.valueOf( new Random().nextInt( 3 ) ) ) );
+            dvs1.add( new EventDataValue( deWeight.getUid(), String.valueOf( ( 2500 + new Random().nextInt( 1500 ) ) ) ) );
+            dvs1.add( new EventDataValue( deArv.getUid(), DataGenerationUtils.getRandomOptionSetCode( osArv  ) ) );
+            dvs1.add( new EventDataValue( deBcg.getUid(), DataGenerationUtils.getRandomBoolString() ) );
+            dvs1.add( new EventDataValue( deOpv.getUid(), DataGenerationUtils.getRandomOptionSetCode( osOpv ) ) );
+            dvs1.add( new EventDataValue( deInfFeed.getUid(), DataGenerationUtils.getRandomOptionSetCode( osInfFeed ) ) );
+            psi1.setEventDataValues( dvs1 );
+
             psiService.addProgramStageInstance( psi1 );
 
             ProgramStageInstance psi2 = new ProgramStageInstance( pi, ps2 );
@@ -177,37 +182,26 @@ public class RandomChildrenPopulator
             psi2.setExecutionDate( date2.toDate() );
             psi2.setOrganisationUnit( ou );
 
+            Set<EventDataValue> dvs2 = new HashSet<>();
+
+            dvs2.add( new EventDataValue( deInfWeight.getUid(), String.valueOf( ( 2500 + new Random().nextInt( 1500 ) ) ) ) );
+            dvs2.add( new EventDataValue( deInfFeed.getUid(), DataGenerationUtils.getRandomOptionSetCode( osInfFeed ) ) );
+            dvs2.add( new EventDataValue( deMeasles.getUid(), DataGenerationUtils.getRandomBoolString() ) );
+            dvs2.add( new EventDataValue( dePenta.getUid(), DataGenerationUtils.getRandomOptionSetCode( osPenta ) ) );
+            dvs2.add( new EventDataValue( deYelFev.getUid(), DataGenerationUtils.getRandomBoolString() ) );
+            dvs2.add( new EventDataValue( deIpt.getUid(), DataGenerationUtils.getRandomOptionSetCode( osIpt ) ) );
+            dvs2.add( new EventDataValue( deDpt.getUid(), DataGenerationUtils.getRandomOptionSetCode( osDpt ) ) );
+            dvs2.add( new EventDataValue( deVitA.getUid(), DataGenerationUtils.getRandomBoolString() ) );
+            dvs2.add( new EventDataValue( deHivRes.getUid(), DataGenerationUtils.getRandomOptionSetCode( osHivRes ) ) );
+            dvs2.add( new EventDataValue( deHivTest.getUid(), DataGenerationUtils.getRandomOptionSetCode( osHivTest ) ) );
+            dvs2.add( new EventDataValue( deChildArv.getUid(), DataGenerationUtils.getRandomOptionSetCode( osChildArv ) ) );
+            psi2.setEventDataValues( dvs2 );
+
             psiService.addProgramStageInstance( psi2 );
-
-            List<TrackedEntityDataValue> dvs = new ArrayList<>();
-
-            dvs.add( new TrackedEntityDataValue( psi1, deApgar, String.valueOf( new Random().nextInt( 3 ) ) ) );
-            dvs.add( new TrackedEntityDataValue( psi1, deWeight, String.valueOf( ( 2500 + new Random().nextInt( 1500 ) ) ) ) );
-            dvs.add( new TrackedEntityDataValue( psi1, deArv, DataGenerationUtils.getRandomOptionSetCode( osArv  ) ) );
-            dvs.add( new TrackedEntityDataValue( psi1, deBcg, DataGenerationUtils.getRandomBoolString() ) );
-            dvs.add( new TrackedEntityDataValue( psi1, deOpv, DataGenerationUtils.getRandomOptionSetCode( osOpv ) ) );
-            dvs.add( new TrackedEntityDataValue( psi1, deInfFeed, DataGenerationUtils.getRandomOptionSetCode( osInfFeed ) ) );
-
-            dvs.add( new TrackedEntityDataValue( psi2, deInfWeight, String.valueOf( ( 2500 + new Random().nextInt( 1500 ) ) ) ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deInfFeed, DataGenerationUtils.getRandomOptionSetCode( osInfFeed ) ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deMeasles, DataGenerationUtils.getRandomBoolString() ) );
-            dvs.add( new TrackedEntityDataValue( psi2, dePenta, DataGenerationUtils.getRandomOptionSetCode( osPenta ) ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deYelFev, DataGenerationUtils.getRandomBoolString() ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deIpt, DataGenerationUtils.getRandomOptionSetCode( osIpt ) ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deDpt, DataGenerationUtils.getRandomOptionSetCode( osDpt ) ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deVitA, DataGenerationUtils.getRandomBoolString() ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deHivRes, DataGenerationUtils.getRandomOptionSetCode( osHivRes ) ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deHivTest, DataGenerationUtils.getRandomOptionSetCode( osHivTest ) ) );
-            dvs.add( new TrackedEntityDataValue( psi2, deChildArv, DataGenerationUtils.getRandomOptionSetCode( osChildArv ) ) );
-
-            for ( TrackedEntityDataValue dv : dvs )
-            {
-                dataValueService.saveTrackedEntityDataValue( dv );
-            }
 
             c++;
 
-            log.info( "Created tracked entity instance " + c + ": " + tei.getUid() + ", " + values[0] + " " + values[1] + " " + values[2] + ", values: " + dvs.size() );
+            log.info( "Created tracked entity instance " + c + ": " + tei.getUid() + ", " + values[0] + " " + values[1] + " " + values[2] );
         }
     }
 }

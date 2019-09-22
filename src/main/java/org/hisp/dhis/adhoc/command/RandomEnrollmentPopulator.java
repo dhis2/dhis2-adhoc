@@ -1,8 +1,10 @@
 package org.hisp.dhis.adhoc.command;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +12,7 @@ import org.hisp.dhis.adhoc.annotation.Executed;
 import org.hisp.dhis.adhoc.utils.DataGenerationUtils;
 import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.eventdatavalue.EventDataValue;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramInstance;
@@ -25,8 +28,6 @@ import org.hisp.dhis.trackedentity.TrackedEntityInstanceService;
 import org.hisp.dhis.trackedentity.TrackedEntityType;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValue;
 import org.hisp.dhis.trackedentityattributevalue.TrackedEntityAttributeValueService;
-import org.hisp.dhis.trackedentitydatavalue.TrackedEntityDataValue;
-import org.hisp.dhis.trackedentitydatavalue.TrackedEntityDataValueService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,10 +50,6 @@ public class RandomEnrollmentPopulator
 
     @Autowired
     private TrackedEntityAttributeValueService attributeValueService;
-
-    @Autowired
-    private TrackedEntityDataValueService dataValueService;
-
 
     @Executed
     @Transactional
@@ -121,9 +118,10 @@ public class RandomEnrollmentPopulator
                     psi.setExecutionDate( date.toDate() );
                     psi.setOrganisationUnit( ou );
 
-                    psiService.addProgramStageInstance( psi );
                     programStageInstanceCount++;
                     totalProgramStageInstanceCount++;
+
+                    Set<EventDataValue> dvs = new HashSet<>();
 
                     for ( ProgramStageDataElement psde : ps.getProgramStageDataElements() )
                     {
@@ -132,15 +130,17 @@ public class RandomEnrollmentPopulator
 
                         if ( de.isNumericType() && dn.contains( "moglobin" ) )
                         {
-                            dataValueService.saveTrackedEntityDataValue( new TrackedEntityDataValue( psi, de,
-                                Integer.toString( DataGenerationUtils.randBetween( 6, 25 ) ) ) );
+                            dvs.add( new EventDataValue( de.getUid(), Integer.toString( DataGenerationUtils.randBetween( 6, 25 ) ) ) );
                         }
                         else if ( ValueType.BOOLEAN.equals( de.getValueType() ) )
                         {
-                            dataValueService.saveTrackedEntityDataValue( new TrackedEntityDataValue( psi, de,
-                                DataGenerationUtils.getRandomBoolString() ) );
+                            dvs.add( new EventDataValue( de.getUid(), DataGenerationUtils.getRandomBoolString() ) );
                         }
                     }
+
+                    psi.setEventDataValues( dvs );
+
+                    psiService.addProgramStageInstance( psi );
                 }
             }
 

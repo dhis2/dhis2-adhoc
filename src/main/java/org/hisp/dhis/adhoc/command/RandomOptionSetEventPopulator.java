@@ -21,7 +21,7 @@ import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramService;
 import org.hisp.dhis.program.ProgramStage;
-import org.hisp.dhis.system.util.DateUtils;
+import org.hisp.dhis.util.DateUtils;
 import org.hisp.dhis.util.Timer;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

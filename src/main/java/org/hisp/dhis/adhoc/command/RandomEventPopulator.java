@@ -17,7 +17,7 @@ import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionService;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitService;
-import org.hisp.dhis.system.util.DateUtils;
+import org.hisp.dhis.util.DateUtils;
 import org.hisp.dhis.util.Timer;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
