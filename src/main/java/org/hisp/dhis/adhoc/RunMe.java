@@ -41,7 +41,7 @@ public class RunMe
     /**
      * Add commands here by adding the bean identifier to the list.
      */
-    private static final ImmutableList<String> COMMANDS = ImmutableList.of( "systemSettingChecker" ); // Change this
+    private static final ImmutableList<String> COMMANDS = ImmutableList.of( "simpleRandomDataPopulator" ); // Change this
 
     // -------------------------------------------------------------------------
     // RunMe

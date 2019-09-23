@@ -1,7 +1,6 @@
 package org.hisp.dhis.adhoc.command;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +44,9 @@ import com.google.common.collect.Sets;
  * The configuration is based on a data set. Data will be generated for all
  * data elements in the data set and their categories and for the attribute
  * categories of the data set.
+ * <p>
+ * The generated data can be based on a correlated, existing data element
+ * and period.
  */
 public class RandomDataPopulator
 {
@@ -162,7 +164,7 @@ public class RandomDataPopulator
             .setPeriods( Sets.newHashSet( peWeight ) )
             .setOrganisationUnits( Sets.newHashSet( ous ) );
 
-        Collection<DataValue> values = dataValueService.getDataValues( params );
+        List<DataValue> values = dataValueService.getDataValues( params );
 
         Map<String, String> orgUnitValueMap = values.stream().collect( Collectors.toMap( v -> v.getSource().getUid(), v -> v.getValue() ) );
 

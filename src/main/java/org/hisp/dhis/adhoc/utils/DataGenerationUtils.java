@@ -22,7 +22,7 @@ public class DataGenerationUtils
     private static List<String> menFirstNames = null;
     private static List<String> lastNames = null;
 
-    private static void LoadNames()
+    private static void loadNames()
         throws Exception
     {
         // TODO: Questionable thread safety
@@ -53,7 +53,7 @@ public class DataGenerationUtils
     public static String getRandomFirstName( boolean isWoman )
         throws Exception
     {
-        LoadNames();
+        loadNames();
 
         return isWoman ? womenFirstNames.get( new Random().nextInt( womenFirstNames.size() ) )
             : menFirstNames.get( new Random().nextInt( menFirstNames.size() ) );
@@ -62,7 +62,7 @@ public class DataGenerationUtils
     public static String getRandomLastName()
         throws Exception
     {
-        LoadNames();
+        loadNames();
 
         return lastNames.get( new Random().nextInt( womenFirstNames.size() ) );
     }
