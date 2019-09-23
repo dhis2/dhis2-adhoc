@@ -21,6 +21,7 @@ import org.hisp.dhis.period.CalendarPeriodType;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.system.util.Clock;
+import org.hisp.dhis.util.DateUtils;
 import org.hisp.quick.BatchHandler;
 import org.hisp.quick.BatchHandlerFactory;
 import org.joda.time.DateTime;
@@ -44,7 +45,7 @@ public class SimpleRandomDataPopulator
     // -------------------------------------------------------------------------
 
     private static final String DATA_SET_UID = "SyaF6Igh6ax";
-    private static final Date START_DATE = new DateTime( 2014, 1, 1, 0, 0 ).toDate();
+    private static final Date START_DATE = new DateTime( 2012, 1, 1, 0, 0 ).toDate();
     private static final Date END_DATE = new DateTime( 2020, 1, 1, 0, 0 ).toDate();
 
     // -------------------------------------------------------------------------
@@ -74,8 +75,7 @@ public class SimpleRandomDataPopulator
     {
         // Periods populated in individual transaction to be present in database for data population
         List<Period> periods = transactionTemplate.execute( status -> getPeriods() );
-        long count = transactionTemplate.execute( status -> populateData( periods ) );
-        log.info( String.format( "Done, data values populated: %d", count ) );
+        transactionTemplate.execute( status -> populateData( periods ) );
     }
 
     private long populateData( List<Period> pes )
@@ -96,8 +96,10 @@ public class SimpleRandomDataPopulator
 
         BatchHandler<DataValue> handler = batchHandlerFactory.createBatchHandler( DataValueBatchHandler.class ).init();
 
-        log.info( String.format( "Generating random data for data set: '%s'", ds.getName() ) );
-        log.info( String.format( "Data elements: %d, org units: %d, periods: %d", des.size(), ous.size(), pes.size() ) );
+        log.info( String.format( "Generating random data for data set: '%s', start date: '%s', end date: '%s'",
+            ds.getName(), DateUtils.getMediumDateString( START_DATE ), DateUtils.getMediumDateString( END_DATE ) ) );
+        log.info( String.format( "Data elements: %d, org units: %d, periods: %d",
+            des.size(), ous.size(), pes.size() ) );
 
         for ( Period pe : pes )
         {
@@ -143,7 +145,7 @@ public class SimpleRandomDataPopulator
 
         handler.flush();
 
-        clock.logTime( String.format( "Data population completed, values added: %d", dvCount ) );
+        clock.logTime( String.format( "Data population completed, %d values inserted", dvCount ) );
 
         return dvCount;
     }
