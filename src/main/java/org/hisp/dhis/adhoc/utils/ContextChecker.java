@@ -2,7 +2,7 @@ package org.hisp.dhis.adhoc.utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Tests the Spring application context for circular dependencies.
@@ -20,10 +20,9 @@ public class ContextChecker
     {
         System.setProperty( "dhis2.home", DHIS2_HOME );
 
-        String configLocation = "classpath*:/META-INF/dhis/beans.xml";
+        log.info( "Initializing Spring context" );
 
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext( configLocation );
-
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext( "org.hisp.dhis" );
         context.setAllowCircularReferences( false );
         context.refresh();
         context.close();

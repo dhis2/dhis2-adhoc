@@ -8,8 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.adhoc.annotation.Executed;
 import org.hisp.dhis.system.util.AnnotationUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.google.common.collect.ImmutableList;
 
@@ -49,8 +48,6 @@ public class RunMe
 
     private static final Log log = LogFactory.getLog( RunMe.class );
 
-    private static ApplicationContext context;
-
     public static void main( String[] args )
         throws Exception
     {
@@ -58,7 +55,7 @@ public class RunMe
 
         log.info( "Initializing Spring context" );
 
-        context = new ClassPathXmlApplicationContext( "classpath*:/META-INF/dhis/beans.xml" );
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext( "org.hisp.dhis" );
 
         log.info( "Spring context initialized" );
 
@@ -73,6 +70,8 @@ public class RunMe
 
             log.info( "Done: " + id );
         }
+
+        context.close();
 
         log.info( "Process completed" );
     }
