@@ -3,6 +3,7 @@ package org.hisp.dhis.adhoc.command;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +69,7 @@ public class RandomOptionSetEventPopulator
     {
         Program program = programService.getProgram( PR );
         ProgramStage stage = program.getProgramStages().iterator().next();
-        List<DataElement> dataElements = stage.getAllDataElements();
+        Set<DataElement> dataElements = stage.getDataElements();
         List<CategoryOptionCombo> aocs = program.getCategoryCombo().getSortedOptionCombos();
 
         log.info( String.format( "Program: %s, '%s', stage: %s", program.getUid(), program.getName(), stage.getUid() ) );
